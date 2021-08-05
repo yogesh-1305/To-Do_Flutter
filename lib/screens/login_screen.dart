@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:todo/buttons/custom_button.dart';
@@ -82,7 +84,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 25,
                   width: 25,
                 ),
-              )
+              ),
+              RoundButton(
+                text: 'Enter as Guest',
+                function: () {
+                  setState(() {
+                    showSpinner = true;
+                    sleep(Duration(seconds: 2));
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, HomeScreen.id, (route) => false);
+                  });
+                },
+                color: Colors.white,
+                elevation: 10,
+                icon: Icon(Icons.person_outline),
+              ),
             ],
           ),
         ),

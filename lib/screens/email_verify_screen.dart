@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo/buttons/custom_button.dart';
 import 'package:todo/firebase/FirebaseHandler.dart';
+import 'package:todo/shared_prefs/SharedPrefs.dart';
 import 'package:todo/utilities/constants.dart';
 
 class VerifyEmail extends StatefulWidget {
@@ -13,6 +14,16 @@ class VerifyEmail extends StatefulWidget {
 class _VerifyEmailState extends State<VerifyEmail> {
   var email = '';
   var password = '';
+  var savedEmail = '';
+  var savedPassword = '';
+  var emailTapped = false;
+
+  @override
+  void initState() {
+    SharedPrefs.getMail().then((value) => savedEmail = value!);
+    SharedPrefs.getPassword().then((value) => savedPassword = value!);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +79,15 @@ class _VerifyEmailState extends State<VerifyEmail> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: TextField(
+                onTap: () {
+                  if (!emailTapped && savedEmail.isNotEmpty) {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (context) => SavedUserBottomSheet(
+                            email: savedEmail, password: savedPassword));
+                    emailTapped = true;
+                  }
+                },
                 style: TextStyle(color: Colors.white),
                 onChanged: (value) {
                   email = value;
@@ -115,11 +135,58 @@ class _VerifyEmailState extends State<VerifyEmail> {
                   createSnackBar(context, 'Logging you in...');
                   var _auth = FirebaseHandler.getInstance();
                   _auth.signUpWithEmailAndPassword(context, email, password);
+                  SharedPrefs.saveUserEmailAndPassword(email, password);
                 }
               },
               color: Colors.white,
               elevation: 10,
               icon: Icon(Icons.thumb_up_alt),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SavedUserBottomSheet extends StatefulWidget {
+  SavedUserBottomSheet({@required this.email, @required this.password});
+
+  final String? email;
+  final String? password;
+
+  @override
+  _SavedUserBottomSheetState createState() => _SavedUserBottomSheetState();
+}
+
+class _SavedUserBottomSheetState extends State<SavedUserBottomSheet> {
+  Color progressBarColor = Colors.white;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 150,
+      child: Padding(
+        padding: EdgeInsets.all(8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text('Previous logged in accounts...'),
+            ListTile(
+              onTap: () {
+                setState(() {
+                  progressBarColor = Colors.blue;
+                });
+                FirebaseHandler.getInstance().signUpWithEmailAndPassword(
+                    context, widget.email!, widget.password!);
+              },
+              leading: Icon(Icons.person),
+              title: Text(
+                '${widget.email}',
+                style: TextStyle(fontSize: 16),
+              ),
+              trailing: CircularProgressIndicator(
+                color: progressBarColor,
+              ),
             ),
           ],
         ),
