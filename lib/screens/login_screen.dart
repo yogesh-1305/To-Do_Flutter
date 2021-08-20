@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:todo/buttons/custom_button.dart';
 import 'package:todo/firebase/FirebaseHandler.dart';
 import 'package:todo/screens/email_verify_screen.dart';
+import 'package:todo/shared_prefs/SharedPrefs.dart';
 
 import 'home_screen.dart';
 
@@ -88,9 +87,9 @@ class _LoginScreenState extends State<LoginScreen> {
               RoundButton(
                 text: 'Enter as Guest',
                 function: () {
-                  setState(() {
+                  setState(() async {
                     showSpinner = true;
-                    sleep(Duration(seconds: 2));
+                    await SharedPrefs.saveGuestUser(true);
                     Navigator.pushNamedAndRemoveUntil(
                         context, HomeScreen.id, (route) => false);
                   });

@@ -10,11 +10,21 @@ class SharedPrefs {
 
   static Future<String?> getMail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return await prefs.getString('mail');
+    return prefs.getString('mail');
   }
 
   static Future<String?> getPassword() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('password');
+  }
+
+  static Future<void> saveGuestUser(bool isGuestUser) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('guest', isGuestUser);
+  }
+
+  static Future<bool?> getGuestUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('guest');
   }
 }
