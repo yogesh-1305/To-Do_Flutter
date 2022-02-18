@@ -9,7 +9,7 @@ import 'package:todo/screens/home_screen.dart';
 import 'package:todo/screens/login_screen.dart';
 import 'package:todo/shared_prefs/SharedPrefs.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   bool isGuestUser = true;
